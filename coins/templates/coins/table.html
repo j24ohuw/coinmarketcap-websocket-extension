@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Coin Table</title>
+    {% load staticfiles %}
+</head>
+<body>
+    <table class="dataTable" id="coins">
+
+
+    </table>
+</body>
+
+
+<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+
+<script>
+    var tableSocket = new WebSocket(
+        'ws://' + window.location.host + "/ws/table/");
+        console.log('connected');
+
+    tableSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var content = JSON.parse(data.content)
+
+        console.log(data.content)
+
+        $.each(content, function (key, val) {
+            $("<tr><td>" + val + "</td</tr>").appendTo("#coins");
+        }); 
+
+        };
+
+</script>
+</html>
+
+
+{% comment %} 
+$.each(coin, function (key, val) {
+    $("<tr><td>" + key + "</td><td>" + val + "</td</tr>").appendTo("#coins");
+}); {% endcomment %}
+{% comment %} 
+var data = JSON.parse(e.data);
+var price = data['price'];
+console.log(price); {% endcomment %}

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        {% load staticfiles %}
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+    
+        <title></title>
+    
+        <!-- Bootstrap core CSS -->
+        <link href="{% static 'frontpage/css/bootstrap.min.css' %}" rel="stylesheet">
+        <!-- 3rd party JS       -->
+        <script src="{% static 'frontpage/js/jquery-3.3.1.min.js' %}"></script>
+        <script src="{% static 'frontpage/js/jquery.waypoints.min.js' %}"></script>
+        <script src="{% static 'frontpage/js/infinite.min.js' %}"></script>
+        <!-- Custom styles for this template -->
+        <link href="{% static 'frontpage/css/dashboard.css' %}" rel="stylesheet">
+      <style>@media print {#ghostery-purple-box {display:none !important}}</style>
+    </head>
+    <body>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav mr-auto">
+                  <li class="nav-item active">
+                      <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="#">API</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="#">Subscription</a>
+                  </li>
+                  <li class="nav-item">
+                          <a class="nav-link" href="#">Profile</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="#">Sign out</a>
+                  </li>
+              </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    {% comment %} <input class="form-control mr-sm-2" id="search_bar" type="search" placeholder="Search" aria-label="Search" oninput="filter()"> {% endcomment %}
+                    <label for="something">
+                        <input id="search_bar" class="form-control mr-sm-2" type="search" placeholder="Name, symbol, or ID" list="results" oninput="filter()" >
+                        <datalist id="results" class="display_results">
+                        </datalist>
+                    </label>
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+      </nav>
+
+      {% block content %}
+      {% endblock %}
+
+      <script>
+      function filter() {
+          var filter_token = document.getElementById("search_bar").value;
+          var searchURL = 'http://' + window.location.host + "/api/coins/?search=" + filter_token
+    
+          var xmlHttp = new XMLHttpRequest();
+          xmlHttp.onreadystatechange = function() {
+            if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                var data = JSON.parse(this.responseText);
+                populate_options(data.results);
+            }
+          };
+          xmlHttp.open("GET", searchURL, true);
+          xmlHttp.send(null);
+      }
+
+      function populate_options(arr) {
+          var displayOptions = "";
+          var i;
+          var iter_count = Math.min(arr.length, 20);
+          for (i=0; i < iter_count; i++) {
+              displayOptions+= '<option value="' + arr[i].name  +' / '+ arr[i].symbol +' / '+ arr[i].id + '">' +  '</option>';
+          }
+          console.log(displayOptions)
+          document.getElementById("results").innerHTML = displayOptions;
+      }
+      </script>
+
+
+      <!-- Bootstrap core JavaScript
+      ================================================== -->
+      <!-- Placed at the end of the document so the pages load faster -->
+      {% comment %} <script src="{% static 'frontpage/js/jquery-3.1.1.min.js' %}"></script> {% endcomment %}
+      {% comment %} <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script> {% endcomment %}
+      {% comment %} <script>window.jQuery || document.write('<script src="../../js/jquery-slim.min.js"><\/script>')</script> {% endcomment %}
+      {% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script> {% endcomment %}
+      {% comment %} <script src="{% static 'frontpage/js/bootstrap.min.js' %}"></script> {% endcomment %}
+      <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+  
+    </body>
+</html>

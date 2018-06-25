@@ -1,0 +1,27 @@
+body {
+  padding-top: 5rem;
+  padding-bottom: 2rem;
+  text-align: left;
+}
+.infinite-container {
+  text-align: right;
+}
+.dashboard {
+  margin-top: 4rem;
+  margin-bottom: 0rem;
+}
+.name {
+  text-align: left;
+}
+.reference{
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+  border-bottom:1px solid rgba(0, 0, 0, 0.2);
+
+}
+
+
+.searchBox .list-group{
+  z-index: 1;
+  position: absolute;
+}
