@@ -3,6 +3,9 @@ body {
   padding-bottom: 2rem;
   text-align: left;
 }
+.hide {
+  display: none;
+}
 .infinite-container {
   text-align: right;
 }
@@ -13,15 +16,35 @@ body {
 .name {
   text-align: left;
 }
-.reference{
+.reference {
   padding-top: 0.7rem;
   padding-bottom: 0.7rem;
   border-bottom:1px solid rgba(0, 0, 0, 0.2);
 
 }
-
-
-.searchBox .list-group{
-  z-index: 1;
-  position: absolute;
+.table thead tr th, .table tbody tr td {
+  border: none;
 }
+  
+.row {
+  position: relative; 
+}
+.bottom-align-text {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+#search-wrapper {
+  padding: 10px;
+  z-index: 1;
+}
+
+#search-field{
+  min-width: 100px;
+  padding: 5px;
+  z-index: 10;
+}
+
+#ui-id-1 {z-index: 9999999999;}
+

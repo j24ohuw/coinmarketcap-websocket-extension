@@ -18,10 +18,10 @@ from django.urls import include, path
 from django.conf.urls import url
 
 urlpatterns = [
+    url(r'^', include('social.urls')),
     path('admin/', admin.site.urls),
     url(r'^', include('subscription.urls')),
     url(r'^', include('coins.urls')),
-    url(r'^', include('social.urls')),
     url(r'^', include('frontpage.urls')),
     # url(r'^chat/', include('chat.urls')),
 ]

@@ -1,0 +1,27 @@
+    <!-- Second row; Info string, table column titles; marketcap, volume, circulating supply-->
+    <div class="row align-items-center justify-content-between">
+        <div class="col-md-4"><i>Data - Coinmarketcap.com Delayed Price. Currency in USD</i></div>
+        <div class="col-md-2 offset-md-2 text-right" style="min-width: 100px;">Rank</div>
+        <div class="col-md-1 text-right" style="min-width: 170px;">Marketcap</div>
+        <div class="col-md-1 text-right" style="min-width: 170px;">Volume</div>
+        <div class="col-md-1 text-right" id="Circulating_Supply_table_head" style="min-width: 170px;">Current Supply</div>
+    </div>
+    <!--Third/last row; price, percent change; table values pushed to the right edge-->
+    <div class="row align-items-center justify-content-between">
+        <div class="col-md-4">
+            <b><a id="price"></a></b>
+            <a id="percent_change_24h"></a>
+            <a id="last_updated"></a>
+        </div>
+        <div class="col-md-2 offset-md-2 text-right" style="min-width: 100px;"><a id="rank"></a></div>
+        <div class="col-md-1 text-right" style="min-width: 170px;"><a id="marketcap"></a></div>
+        <div class="col-md-1 text-right" style="min-width: 170px;"><a id="volume"></a></div>
+        <div class="col-md-1 text-right no-gutters" style="min-width: 170px;"><a id="circulating_supply"></a></div>
+    </div>
+    <div class="row align-items-end">
+        <div><canvas class="my-4 w-100 h-100" id="myChart" width="900" height="380"></canvas></div>
+        <div id="progress_bar">
+            <progress id="animationProgress" max="1" value="0" style="width: 100%"></progress>
+        </div>
+    </div>
+</div>

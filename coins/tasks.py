@@ -24,11 +24,13 @@ from django.core.cache import cache
 from hashlib import md5
 from celery.utils.log import get_task_logger
 # import multiprocessing
-DELTA = timedelta(minutes=5)
 DELTA1 = timedelta(minutes=1)
 DELTA2 = timedelta(minutes=2)
 DELTA3 = timedelta(minutes=3)
 DELTA4 = timedelta(minutes=4)
+DELTA = timedelta(minutes=5)
+HALF_DELTA = timedelta(seconds=150)
+
 TIMEOUT = 60
 # TIME_OFFSET = datetime.utcnow() - datetime.now()
 """
@@ -92,6 +94,13 @@ def update_or_create_obj(coin_list):
                 "content": json.dumps(coin),
             }
         )
+        async_to_sync(channel_layer.group_send)(
+            coin['slug'],
+            {
+                "type": "receive_json",
+                "content": json.dumps(coin),
+            }
+        )
         if created:
             print("New coin %s created" %obj.name)
 
@@ -119,7 +128,7 @@ def pipe():
                     ) for i in iter_pages
             ]
         )
-        assembly_lines().get()
+        # assembly_lines().get()
         # timestamp = Coin.objects.all()[10].last_updated
         timestamp =  (assembly_lines | 
                         last_update_stamp.si()
@@ -128,8 +137,9 @@ def pipe():
     
     except Exception as e:
         print(e)
-    
+
 def run_pipe():
+    # this function runs the entire task cycle then waits 300 seconds synchronously within whileloop
     timestamp = pipe()
     while True:    
         Bitcoin = Coin.objects.get(id=1)
@@ -167,11 +177,11 @@ def recurse_pipe():
         with allow_join_result():
             timestamp_last = pipe()            
             reference_timestamp = datetime.fromtimestamp(timestamp_last)
-            eta = reference_timestamp + DELTA1
+            eta = reference_timestamp + timedelta(seconds=100)
             # recurse_pipe.apply_async(eta=eta)
             if eta < datetime.now():
                 # recurse_pipe.si().apply_async()
-                recurse_pipe.apply_async(countdown=60)
+                recurse_pipe.apply_async(countdown=30)
             else:
                 recurse_pipe.apply_async(eta=eta)
     

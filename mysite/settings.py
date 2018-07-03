@@ -17,10 +17,27 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'j+pqw2o%+6(oq*u19bu!ieg+lsdn3u8z_rr17#+yj)7j6=n5o7'
+# SECRET_KEY = 'j+pqw2o%+6(oq*u19bu!ieg+lsdn3u8z_rr17#+yj)7j6=n5o7'
+
+# no secret key will be generated during development so default value will be used; secret key will be generated during deployment 
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'j+pqw2o%+6(oq*u19bu!ieg+lsdn3u8z_rr17#+yj)7j6=n5o7')
+
+"""Deployment Checklist"""
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-# ALLOWED_HOSTS =  ['localhost', '127.0.0.1']
+DEBUG = False
+ALLOWED_HOSTS =  ['*']
+# You should consider enabling this header to prevent the browser from identifying content types incorrectly.
+# SECURE_CONTENT_TYPE_NOSNIFF = True
+# You should consider enabling this header to activate the browser's XSS filtering and help prevent XSS attacks.
+SECURE_BROWSER_XSS_FILTER = True
+# Whether to use a secure cookie for the session cookie. If this is set to True, the cookie will be marked 
+# as “secure,” which means browsers may ensure that the cookie is only sent under an HTTPS connection.
+SESSION_COOKIE_SECURE = True
+# Whether to use a secure cookie for the CSRF cookie. If this is set to True, the cookie will be marked as “secure,” which means browsers may ensure that the cookie is only sent with an HTTPS connection.
+CSRF_COOKIE_SECURE = True
+# The default is 'SAMEORIGIN', but unless there is a good reason for your site to serve other parts of itself in a frame, you should change it to 'DENY'.
+X_FRAME_OPTIONS = 'DENY'
+"""End Checklist"""
 
 # Application definition
 INSTALLED_APPS = [
@@ -39,12 +56,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'channels',
 ]
-
 MIDDLEWARE = [
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -103,6 +119,11 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '622874158558-an99eth4lfjpobvntdqvo27uvi3oj56m.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'pHvYp2cPAyPwARRoeGZgJC27'
+SOCIAL_AUTH_FIELDS_STORED_IN_SESSION = ['state']
+SOCIAL_AUTH_POSTGRES_JSONFIELD = True
+SESSION_COOKIE_SECURE = False #True
+CSRF_COOKIE_SECURE = False
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 AUTHENTICATION_BACKENDS = (
  'social_core.backends.open_id.OpenIdAuth',  # for Google authentication

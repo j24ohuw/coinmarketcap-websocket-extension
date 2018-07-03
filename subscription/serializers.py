@@ -6,9 +6,18 @@ from coins.models import Coin
 """
 class SubscriptionSerializer(serializers.ModelSerializer):
     """Serializer for the Subscriber model"""
-
+    coin = serializers.SlugRelatedField(slug_field='slug',
+                                        queryset=Coin.objects.all()
+                                        )
     class Meta:
         model = Subscription
         fields = ('owner', 'coin','id')
 
 
+# lookup_field = 'coin__slugs'
+# slug = serializers.SlugRelatedField(
+#     many=False,
+#     read_only=True,
+#     slug_field='slug',
+# )
+# owner = serializers.StringRelatedField(read_only=True)

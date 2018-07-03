@@ -47,7 +47,7 @@
                     {% comment %} <input class="form-control mr-sm-2" id="search_bar" type="search" placeholder="Search" aria-label="Search" oninput="filter()"> {% endcomment %}
                     <label for="something">
                         <input id="search_bar" class="form-control mr-sm-2" type="search" placeholder="Name, symbol, or ID" list="results" oninput="filter()" >
-                        <datalist id="results" class="display_results">
+                        <datalist id="results" class="display_results" onchange="location = this.value;">
                         </datalist>
                     </label>
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
@@ -55,37 +55,34 @@
             </div>
       </nav>
 
-      {% if coins.has_next %}
-      <a class="infinite-more-link" href="?page={{ coins.next_page_number }}"></a>
-      {% endif %} 
+    <script>
+    function filter() {
+        var filter_token = document.getElementById("search_bar").value;
+        var searchURL = 'http://' + window.location.host + "/api/coins/?search=" + filter_token
 
-      <script>
-      function filter() {
-          var filter_token = document.getElementById("search_bar").value;
-          var searchURL = 'http://' + window.location.host + "/api/coins/?search=" + filter_token
-    
-          var xmlHttp = new XMLHttpRequest();
-          xmlHttp.onreadystatechange = function() {
-            if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-                var data = JSON.parse(this.responseText);
-                populate_options(data.results);
-            }
-          };
-          xmlHttp.open("GET", searchURL, true);
-          xmlHttp.send(null);
-      }
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() {
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+            var data = JSON.parse(this.responseText);
+            populate_options(data.results);
+        }
+        };
+        xmlHttp.open("GET", searchURL, true);
+        xmlHttp.send(null);
+    }
 
-      function populate_options(arr) {
-          var displayOptions = "";
-          var i;
-          var iter_count = Math.min(arr.length, 20);
-          for (i=0; i < iter_count; i++) {
-              displayOptions+= '<option value="' + arr[i].name  +' / '+ arr[i].symbol +' / '+ arr[i].id + '">' +  '</option>';
-          }
-          console.log(displayOptions)
-          document.getElementById("results").innerHTML = displayOptions;
-      }
-      </script>
+    function populate_options(arr) {
+        var displayOptions = "";
+        var i;
+        var iter_count = Math.min(arr.length, 20);
+        for (i=0; i < iter_count; i++) {
+            var hrefURL = 'http://' + window.location.host + '/currencies/' + arr[i].slug + '/';
+            displayOptions+= '<option value="' + hrefURL + '">'+'</option>';//arr[i].name  +' / '+ arr[i].symbol +' / '+ arr[i].id + '">' + '</option>';
+        }
+        console.log(displayOptions)
+        document.getElementById("results").innerHTML = displayOptions;
+    }
+    </script>
 
 
       <!-- Bootstrap core JavaScript

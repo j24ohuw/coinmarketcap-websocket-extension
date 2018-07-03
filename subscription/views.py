@@ -8,6 +8,7 @@ from .models import Subscription
 from .serializers import SubscriptionSerializer
 from .permissions import IsOwnerOrReadOnly
 # from .serializers import UserSerializer
+from django.views.decorators.csrf import csrf_exempt
 
 class SubscriptionViewset(viewsets.ModelViewSet):
     queryset = Subscription.objects.all()
@@ -15,12 +16,26 @@ class SubscriptionViewset(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                           IsOwnerOrReadOnly,
                           )
-    
+    lookup_field = 'coin__slug'
+
     def get_queryset(self):
-        user = self.request.user
-        return Subscription.objects.filter(owner=user)
+        if self.request.user.is_authenticated:
+            user = self.request.user
+            self.user = user
+            return Subscription.objects.filter(owner=user)
+        else:
+            return Subscription.objects.filter(owner=None)
     
-    
+    def perform_create(self, serializer):
+        return serializer.save(owner=self.request.user)
+
+    # def destroy(self, request, slug): #format=None
+    #     queryset = self.get_queryset()
+    #     print(request)
+    #     obj = queryset.get_object(coin=slug)
+    #     obj.delete()
+    #     return Response(status=status.HTTP_204_NO_CONTENT)
+
     # def create(self, request):
     #     print(request.data['coin'])
     #     print(self.queryset.filter(coin=request.data['coin']))

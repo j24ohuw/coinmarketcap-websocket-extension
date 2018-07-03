@@ -7,6 +7,8 @@ from django.conf import settings
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
 # Windows workaround. Remove for Linux environment
 # os.environ['FORKED_BY_MULTIPROCESSING']= "1"
+os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
+# django.setup()
 
 app = Celery('coins')
 # Using a string here means the worker will not have to

@@ -14,37 +14,20 @@ class Coin(models.Model):
         *update whenever price is updated
         market_cap (float): total market cap of the coin
     """
-    circulating_supply = models.FloatField(default=-1,
-                                null=True,
-                                blank=True)
-    name = models.CharField(default='', 
-                                max_length = 100)
-    symbol = models.CharField(default='', 
-                                max_length = 100)
-    id = models.IntegerField(default=-1, 
-                                primary_key=True)# API_ID
-    price = models.FloatField(default=-1,
-                                null=True,
-                                blank=True)
-    last_updated = models.FloatField(default=-1, 
-                                null=True,
-                                blank=True)
-    marketcap = models.FloatField(default=-1,
-                                null=True,
-                                blank=True)
-    volume = models.FloatField(default=-1,
-                                null=True,
-                                blank=True)
-    slug = models.CharField(default='', 
-                                max_length=100,
-                                null=True,
-                                blank=True)
-    rank = models.IntegerField(default=-1,
-                                null=True,
-                                blank=True)
-    percent_change_24h = models.FloatField(default = 0,
-                                null=True,
-                                blank=True)
+    circulating_supply = models.FloatField(default=-1,null=True,blank=True)
+    name = models.CharField(default='', max_length = 100, unique=True)
+    symbol = models.CharField(default='', max_length = 100, unique=True)
+    id = models.IntegerField(default=-1, primary_key=True)# API_ID
+    price = models.FloatField(default=-1, null=True, blank=True)
+    last_updated = models.FloatField(default=-1,null=True, blank=True)
+    marketcap = models.FloatField(default=-1, null=True,blank=True)
+    volume = models.FloatField(default=-1, null=True,blank=True)
+    slug = models.SlugField(default="")
+    rank = models.IntegerField(default=-1, null=True, blank=True)
+    percent_change_24h = models.FloatField(default = 0, null=True, blank=True)
 
     def __unicode__(self):
-        return self.name
+        return self.symbol
+
+    def __str__(self):
+        return self.slug

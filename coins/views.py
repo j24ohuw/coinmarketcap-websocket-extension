@@ -1,6 +1,8 @@
 import datetime
 import pandas as pd
 from time import time
+import urllib.request
+import json
 #core django
 from django.http import Http404
 from django.contrib.auth.models import User
@@ -23,16 +25,14 @@ from .models import Coin
 from .serializers import CoinSerializer
 
 from .helpers import get_num_currencies
-from .tasks import *
-# from .tasks import renew_database
-# LISTING_DF = get_listings()
+ALPHA_VANTAGE_DAILY_URL = 'https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&market=USD&apikey=%22B8NP683F4S21K639%22&symbol='
 """Provide list, retrieve, get_detail, update, and create views
 """
 
 def tableView(request):
     return render(request, 'coins/table.html', {})
 
-def coin_detail(request):
+def coin_detail(request, *args, **kwargs):
     return render(request, 'coins/coin_detail.html', {})
 
 
@@ -52,6 +52,29 @@ class CoinViewSet(viewsets.ModelViewSet):
     # http://127.0.0.1:8000/api/coins/?search=1027
     filter_backends = (DjangoFilterBackend, SearchFilter,)
     search_fields = ('name', '=id', 'symbol',)
+    lookup_field = 'slug'
+
+from django.http import HttpResponse, JsonResponse
+@api_view(['GET'])
+def historical_data_view(request, symbol):
+    print(symbol)
+    closing_prices = get_daily_data(symbol)
+    return JsonResponse(closing_prices)
+
+def get_daily_data(symbol):
+    url = ALPHA_VANTAGE_DAILY_URL + symbol
+    with urllib.request.urlopen(url) as url:
+        data =json.loads(url.read().decode())
+    return data
+    # data = data['Time Series (Digital Currency Daily)']
+    # print(data)
+    # open, high, low, close = [], [], [], []
+    # for datum in data:
+    #     open.append(datum['1a. open (USD)'])
+    #     low.append(datum['3a. low (USD)'])
+    #     high.append(datum['3a. high (USD)'])
+    #     close.append(datum['4a close (USD)'])
+    # return close
 
 
 class CoinSearchListVIew(ListAPIView):
@@ -62,33 +85,6 @@ class CoinSearchListVIew(ListAPIView):
     serializer_class = CoinSerializer
     filter_backends = (DjangoFilterBackend, SearchFilter,)
     search_fields = ('=id','name', 'symbol',)
-
-    # def get_queryset(self):
-    #     keywords = self.request.GET.get('q')
-        
-    #     if keywords:
-    #         query = SearchQuery(keywords)
-    #         vector = SearchVector('id', 'name', 'symbol')
-    #         qs = self.queryset.filter(search=query)
-    #         qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
-    #     return qs
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # class CoinView(viewsets.ModelViewSet):

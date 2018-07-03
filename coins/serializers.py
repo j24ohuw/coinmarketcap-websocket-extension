@@ -17,6 +17,7 @@ class CoinSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coin
         fields = '__all__'
+        lookupfield = "slug"
         # ordering = ('rank',)
 
         def to_representaiton(self, value):

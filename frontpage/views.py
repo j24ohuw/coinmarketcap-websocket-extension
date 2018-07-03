@@ -26,21 +26,6 @@ def coin_list(request, *args, **kwargs):
 
     # return render(request, 'frontpage/coin_list.html', {"coins":coins})
 
-def template(request):
+def templateView(request):
     return render(request, 'frontpage/base.html', {})
 
-def coin_list_interactive(request, *args, **kwargs):
-    coin_list = CoinViewSet().get_queryset()
-    # Show 40 contacts per page
-    paginator = Paginator(coin_list, 40) 
-    page = request.GET.get('page')
-    coins = paginator.get_page(page)
-    try:
-        coins = paginator.page(page)
-    except PageNotAnInteger:
-        coins = paginator.page(1)
-    except EmptyPage:
-        coins = paginator.page(paginator.num_pages)
-    return render(request, 
-                'frontpage/test.html', 
-                {'coins':coins})

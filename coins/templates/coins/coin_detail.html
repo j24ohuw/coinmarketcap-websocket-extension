@@ -1,5 +1,345 @@
 {% extends 'frontpage/base.html' %}
 
 {% block content %}
-<canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+<!--First row; name, ticker, Subscribe button-->
+<div class="row align-items-start justify-content-between">
+    <div class="col bottom-align-text">
+        <b id="name"></b>
+        <a id="symbol"></a>
+    </div>
+    <div class="col">
+        <button type="button" class="btn btn-sm btn-outline-primary float-right" id="subscription_button" onclick="subscription()" style="outline-color: rgb(55, 55, 110);" >Log-in to subscribe</button>
+    </div>
+</div>
+<!-- Second row; Info string, table column titles; marketcap, volume, circulating supply-->
+<div class="row">
+    <div class="col-md-4">
+        <i>Data - Coinmarketcap.com Delayed Price. Currency in USD</i></br>
+        <b><a id="price"></a></b>
+        <a id="percent_change_24h"></a>
+        <a id="last_updated"></a>
+    </div>
+    <div class="col md-4"></div>
+    <div class="col md-4">
+        <table class="table table-responsive-sm m-0">
+            <thead>
+                <tr>
+                    <th scope="col" class="text-right p-0" style="width: 5%; min-width: 100px;">Rank</th>
+                    <th scope="col" class="text-right p-0" style="width: 37.5%; min-width: 170px;">Marketcap</th>
+                    <th scope="col" class="text-right p-0" style="width: 37.5%; min-width: 170px;">Volume</th>
+                    <th scope="col" class="text-right py-0 pr-1" style="width: 20%; min-width: 170px;">Current Supply</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="rank" class="text-right p-0"></td>
+                    <td id="marketcap" class="text-right p-0"></td>
+                    <td id="volume" class="text-right p-0"></td>
+                    <td id="circulating_supply" class="text-right py-0 pr-1"></td>
+                </tr>
+            </tbody>
+        </table>   
+    </div>      
+    
+</div>
+<!--Third/last row; price, percent change; table values pushed to the right edge-->
+<div class="row align-items-end">
+    <div><canvas class="my-4 w-100 h-100" id="myChart" width="900" height="380"></canvas></div>
+    <div id="progress_bar">
+        <progress id="animationProgress" max="1" value="0" style="width: 100%"></progress>
+    </div>
+</div>
+
+
+
+<!--Simple function to switch subscribe button to on-off-->
+<script id="fn_subscription">
+    function subscription(){
+        button_str = document.getElementById("subscription_button").innerHTML;
+        if (button_str == "Subscribe"){
+            send_subscription_request("POST");
+            document.getElementById('subscription_button').innerHTML = "Unsubscribe";
+        } else if(button_str == "Unsubscribe") {
+            send_subscription_request('DELETE');
+            document.getElementById('subscription_button').innerHTML = "Subscribe";
+        }
+    };
+    // Send DELETE/POST request to subscription URL endpoint
+    function send_subscription_request(request_type) {
+        var xmlHttp_subscription = new XMLHttpRequest();
+        var subscription_api_URL = 'http://' + window.location.host + '/api/subscription/';
+        var current_URL = window.location.pathname;
+        // extract coin slug from current URL pathname 
+        var current_URL_list = current_URL.split('/');
+        var slug = current_URL_list[current_URL_list.length-2];
+        var endpoint = subscription_api_URL+slug+'/'
+
+        xmlHttp_subscription.onreadystatechange = function() {
+            if (xmlHttp_subscription.readyState ==4 && this.status ==200) {
+                var data = JSON.parse(this.responseText);
+                var results = data.results;
+                // console.log(data.results);
+                if (request_type=="GET") {
+                    for (var i=0; i < results.length; i++) {
+                        if (slug==results[i].coin){
+                            document.getElementById('subscription_button').innerHTML = "Unsubscribe";
+                            break;       
+                        }
+                        // if user is not logged in; re-route the user to log-in page
+                        else if (i == results.length-1 && results[i].coin != slug) {
+                            document.getElementById('subscription_button').innerHTML = "Subscribe";
+                        }
+                    }    
+                }
+            }
+        };
+        // var csrftoken = "{% csrf_token %}";
+        var csrftoken = getCookie('csrftoken');
+        // xmlHttp_subscription.send(null); // ###REMEMBER TO ALWAYS SEND!!!!!!!!!!!!###//
+
+        if (request_type =="POST") {
+            xmlHttp_subscription.open("POST", subscription_api_URL, true); //request_type
+            xmlHttp_subscription.setRequestHeader("X-CSRFToken", csrftoken);
+            xmlHttp_subscription.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');    
+            xmlHttp_subscription.send("coin="+slug);
+        } else if (request_type =="DELETE") {
+            xmlHttp_subscription.open("DELETE", endpoint, true); //request_type
+            xmlHttp_subscription.setRequestHeader("X-CSRFToken", csrftoken);
+            xmlHttp_subscription.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');    
+            xmlHttp_subscription.send(null);
+        } else if (request_type =="GET") {
+            xmlHttp_subscription.open("GET", subscription_api_URL, true); //request_type
+            // xmlHttp_subscription.setRequestHeader("X-CSRFToken", csrftoken);
+            // xmlHttp_subscription.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');    
+            xmlHttp_subscription.send(null);           
+        }
+    };
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+
+<!--Populate subscription button tag with user's current subscription status-->
+<script id="init_user_subscription_state">
+    send_subscription_request("GET");
+</script>
+
+<!--Simple get request to CoinViewSet detail view- && populate top cointainer attributes-->
+<script id="fn_call_API">
+    var xmlHttp = new XMLHttpRequest();
+    //Extract symbol from the current URL split e.i) split(/abc/def/ghk)
+    var current_URL = window.location.pathname;
+    var current_URL_list = current_URL.split('/')
+    var slug = current_URL_list[current_URL_list.length-2]
+    //console.log(current_URL_list);
+    var REST_URL = 'http://' + window.location.host + '/api/coins/' + slug;
+    var count = 1;
+    // GET request to the REST endpoint e.i) host/api/coins/bitcoin
+    xmlHttp.onreadystatechange = function() {
+        if (xmlHttp.readyState ==4 && this.status ==200 && this.status !=404) {
+            var data = JSON.parse(this.responseText);
+            project_data(data);
+            // console.log(data.slug);
+            if (count == 1) {
+                get_hist(data.symbol);
+                count = count - 1;
+                //console.log('Count is ', count)
+            }
+        }
+    };
+    // Populate Container attributes ex) price, percent change, etc.
+    xmlHttp.open("GET", REST_URL, true);
+    xmlHttp.send(null);
+    // Callback function to display data onto the data_display HTML Id
+    function project_data(data) {
+        var obj="";
+        
+        for (var key in data) {
+            if (key=="name") {
+                document.getElementById(key).innerHTML = data[key];
+            }
+            if (key=="price"){
+                document.getElementById('price').innerHTML = data[key];
+            }
+            if (key=="percent_change_24h"){
+                // document.getElementById('percent_change_24h').innerHTML = '('+ data[key] +'%)';
+                // calculate absolute price difference compared to yesterday's
+                var prev_close = data['price'] / (1-data[key]/100);
+                var abs_return = prev_close - data['price']
+                abs_return = abs_return.toString().slice(0,data['price'].toString().length);
+                if (data[key] < 0) {
+                    document.getElementById('percent_change_24h').innerHTML = '<font color="red">' + abs_return + ' (' + data[key] +'%)</font>';
+                }
+                else if (data[key] > 0) {
+                    document.getElementById('percent_change_24h').innerHTML = '<font color="green">+' + abs_return + ' (' + data[key] +'%)</font>';
+                }
+            }
+            if (key=="rank"){
+                document.getElementById(key).innerHTML = data[key];
+            }
+            if (key=="volume"){
+                document.getElementById(key).innerHTML = data[key];
+            }
+            if (key=="symbol"){
+                document.getElementById(key).innerHTML = '(' + data[key] +')';
+            }
+            if (key=="circulating_supply"){
+                document.getElementById(key).innerHTML = data[key];
+            }
+            if (key=="last_updated"){
+                var unix_timestamp = data[key];
+                var date = new Date(unix_timestamp*1000);
+                // Hours part from the timestamp
+                var hours = date.getHours();
+                // Minutes part from the timestamp
+                var minutes = "0" + date.getMinutes();
+                // Seconds part from the timestamp
+                var seconds = "0" + date.getSeconds();
+                // Will display time in 10:30:23 format
+                var formatted_time = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+                document.getElementById(key).innerHTML = '<i><font size="1" color="grey"> &emsp; As of ' + formatted_time + ' UTC</i>';
+            }
+            if (key=="marketcap"){
+                document.getElementById(key).innerHTML = data[key];
+            }
+            obj+= '<li id="' +key + '">' + key + ':' + data[key] + '</li>';
+        };
+        //document.getElementById('data_display').innerHTML = obj;
+    }
+</script>
+
+<script id="get_csrf_token">
+    //function csrfSafeMethod(method) {
+    //    // these HTTP methods do not require CSRF protection
+    //    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    //}
+    //$.ajaxSetup({
+    //    beforeSend: function(xhr, settings) {
+    //       if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+    //            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+    //        } 
+    //    }
+    //});
+</script>
+<!--Call historical data REST endpoint and render a chart-->
+<script id="chart">
+    var progress = document.getElementById('animationProgress');
+    // accept symbol and generate a url from which we get historical data
+    function get_hist(symbol) {
+        var hist_xmlHttp = new XMLHttpRequest();
+        var current_URL = window.location.pathname;
+        var current_URL_list = current_URL.split('/')
+        var api_hist_URL = 'http://' + window.location.host + '/api/hist/' + symbol;
+        // initiate historical prices and dates array
+        var closing_prices = [];
+        var dates = [];
+        var arr_count = 0;
+        hist_xmlHttp.onreadystatechange = function() {
+            if (hist_xmlHttp.readyState ==4 && this.status ==200 && this.status !=404) {
+                var hist_data = JSON.parse(this.responseText);
+                // console.log(hist_data);  
+                hist_data = hist_data['Time Series (Digital Currency Daily)'];
+                for (key in hist_data) {
+                    //var closing_price = key['4a. close (USD)']
+                    // console.log(key);
+                    var price = hist_data[key]['4a. close (USD)'];
+                    dates.push(key)
+                    closing_prices.push(price);
+                    arr_count++;
+                    if (arr_count == 100) { //Use 86 to break even 
+                        break;
+                    }
+                }     
+            }
+            // Call chart render function
+            // dates and prices need to be reversed since most recent data are given at the top
+            render_chart(dates.reverse(), closing_prices.reverse(), symbol);
+            
+        };
+        hist_xmlHttp.open("GET", api_hist_URL, true);
+        hist_xmlHttp.send(null);
+    }
+
+    function render_chart(labels, data, symbol) {
+        var ctx = document.getElementById("myChart");
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '',
+                    data: data,
+                    backgroundColor: '#36a2eb',
+                    borderColor: '#36a2eb',
+                    fill: false,
+                }],
+            },
+            options: {
+                responsive: true,
+                //maintainAspectRatio: true,
+                animation: {
+                    onProgress: function(animation) {
+                        progress.value = animation.animationObject.currentStep / animation.animationObject.numSteps;
+                    },
+                    onComplete: function() {
+                        document.getElementById('progress_bar').innerHTML = null;
+						window.setTimeout(function() {
+							progress.value = 0;
+						}, 2000);
+					}
+                },
+                elements: {
+                    line: {
+                        tension: 0, // disables bezier curves
+                    }
+                },  
+                legend: {
+                    display: false,
+                },
+				title: {
+					display: false,
+					//text: 'BTC/USD Last 90 days'
+				},
+				tooltips: {
+                    enable: false,
+                    pointerEvents:'none',
+					// mode: 'index',
+					// intersect: false,
+                },
+                ticks: {
+                    autoSkip:true,
+                    maxTicksLimit:30,
+                    autoSkipPadding:30,
+                },
+				hover: {
+					mode: 'nearest',
+					intersect: true
+				},
+				scales: {
+					yAxes: [{
+						display: true,
+						scaleLabel: {
+							display: false,
+                            labelString: 'USD',
+						}
+					}]
+				}
+            }
+        });
+    }
+</script>
+
 {% endblock %}
