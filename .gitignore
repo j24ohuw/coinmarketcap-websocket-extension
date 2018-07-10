@@ -1,5 +1,4 @@
-coins/migrations/0001_initial.py
-coins/migrations/__init__.py
-subscription/migrations/0001_initial.py
-subscription/migrations/__init__.py
+coins/migrations/
+subscription/migrations/
+
 
