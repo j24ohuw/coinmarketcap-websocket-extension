@@ -6,6 +6,8 @@ from coins.models import Coin
 """
 class SubscriptionSerializer(serializers.ModelSerializer):
     """Serializer for the Subscriber model"""
+    owner = serializers.ReadOnlyField(source='owner.username')
+
     coin = serializers.SlugRelatedField(slug_field='slug',
                                         queryset=Coin.objects.all()
                                         )

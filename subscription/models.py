@@ -10,10 +10,17 @@ class Subscription(models.Model):
                                 on_delete=models.CASCADE,
                                 blank=True)
     
-    coin = models.ForeignKey(Coin, on_delete=models.CASCADE, unique=True)
+    coin = models.ForeignKey(Coin, on_delete=models.CASCADE)
 
-    # last_updated = models.FloatField(default=-1)
+    # last_updated = models.FloatField(default=-1)z
     created = models.DateTimeField(default=timezone.now)
     
+    class Meta:
+        unique_together = (
+            ("owner", "coin")
+        )
     def __unicode__(self):
         return self.coin
+
+    def __str__(self):
+        return self.coin.slug

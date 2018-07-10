@@ -2,11 +2,6 @@ from __future__ import absolute_import, unicode_literals
 import os, time, json
 from datetime import datetime, timedelta
 from math import ceil
-from celery.utils.log import get_task_logger
-from celery import group, chord, chain
-from celery import shared_task#, task
-from django.shortcuts import get_object_or_404
-from django.http import Http404
 # Channel layer imports & assignment
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -18,11 +13,16 @@ from .models import Coin
 from .serializers import CoinSerializer
 from celery.result import allow_join_result
 from celery.five import monotonic
+from celery.schedules import crontab
 from celery.utils.log import get_task_logger
-from contextlib import contextmanager
+from celery import group, chord, chain
+from celery import shared_task#, task
+from celery.decorators import periodic_task
+from django.shortcuts import get_object_or_404
+from django.http import Http404
 from django.core.cache import cache
+from contextlib import contextmanager
 from hashlib import md5
-from celery.utils.log import get_task_logger
 # import multiprocessing
 DELTA1 = timedelta(minutes=1)
 DELTA2 = timedelta(minutes=2)
@@ -188,8 +188,10 @@ def recurse_pipe():
     except Exception as e:
         print(e)
 
-
-
+# periodically run pipe tasks every minute
+@periodic_task(run_every=timedelta(seconds=60), name="run_pipe_minutely", ignore_result=True)
+def periodic_pipe():
+    pipe()
 
 # def recurse_pipe(eta=-1):
 #     if eta == -1:

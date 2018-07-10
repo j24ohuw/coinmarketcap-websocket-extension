@@ -18,6 +18,7 @@ from django.urls import include, path
 from django.conf.urls import url
 
 urlpatterns = [
+    url(r'^users/', include('accounts.urls')),
     url(r'^', include('social.urls')),
     path('admin/', admin.site.urls),
     url(r'^', include('subscription.urls')),

@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import Coin
 from datetime import datetime
+from django.contrib.auth.models import User
+
 """serializers
 """
 class CoinSerializer(serializers.ModelSerializer):
@@ -24,3 +26,15 @@ class CoinSerializer(serializers.ModelSerializer):
             value.last_updated = datetime.fromtimestamp(
                 value.last_updated).strftime('%Y-%m-%d %H:%M:%S') + 'UTC'
 
+
+# class UserSerializer(serializers.ModelSerializer):
+    
+
+
+#     def create(self, validated_data):
+#         user = User.objects.create(
+#             username=validated_data['username']
+#         ),
+#         user.set_password(validated_data['password'])
+#         user.save()
+#         return user

@@ -24,7 +24,7 @@ class SubscriptionViewset(viewsets.ModelViewSet):
             self.user = user
             return Subscription.objects.filter(owner=user)
         else:
-            return Subscription.objects.filter(owner=None)
+            return Subscription.objects.all() #filter(owner=None)
     
     def perform_create(self, serializer):
         return serializer.save(owner=self.request.user)

@@ -11,9 +11,10 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -24,7 +25,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'j+pqw2o%+6(oq*u19bu!ieg+lsdn3u
 
 """Deployment Checklist"""
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS =  ['*']
 # You should consider enabling this header to prevent the browser from identifying content types incorrectly.
 # SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -41,6 +42,7 @@ X_FRAME_OPTIONS = 'DENY'
 
 # Application definition
 INSTALLED_APPS = [
+    'accounts',
     'django_filters',
     'rest_framework',
     'coins',
@@ -91,7 +93,11 @@ TEMPLATES = [
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 100
+    'PAGE_SIZE': 100,
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
+    ),
+
 }
 # CELERY STUFF
 BROKER_URL = 'redis://127.0.0.1:6379'#'redis://54.191.152.209:6379'
@@ -117,6 +123,7 @@ CACHES = {
 #SOCIAL AUTH CONFIG
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '622874158558-an99eth4lfjpobvntdqvo27uvi3oj56m.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'pHvYp2cPAyPwARRoeGZgJC27'
 SOCIAL_AUTH_FIELDS_STORED_IN_SESSION = ['state']
@@ -145,10 +152,13 @@ DATABASES = {
         'USER': 'admin',
         'PASSWORD': 'password',
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': '5432',
     }
 }
 
+# TEST SETTINGS
+if 'test' in sys.argv or 'test_coverage' in sys.argv: #Covers regular testing and django-coverage
+    DATABASES['default']['ENGINE'] = 'django.db.backends.sqlite3'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators

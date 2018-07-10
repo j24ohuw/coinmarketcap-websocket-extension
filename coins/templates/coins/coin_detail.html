@@ -236,6 +236,24 @@
 </script>
 <!--Call historical data REST endpoint and render a chart-->
 <script id="chart">
+    function convert_timestamp(unix_timestamp){
+        var date = new Date(unix_timestamp*1000);
+        var year = date.getFullYear();
+        var month = date.getMonth();
+        var day = date.getDate();
+        var hours = date.getHours();
+        // Hours part from the timestamp
+        var hours = date.getHours();
+        // Minutes part from the timestamp
+        var minutes = "0" + date.getMinutes();
+        // Seconds part from the timestamp
+        var seconds = "0" + date.getSeconds();  
+        // Will display time in 10:30:23 format
+        var calender_date = year + '-' + month + '-' + day;
+        var time = hours + ':' + minutes.substr(-2);// + ':' + seconds.substr(-2);
+        return calender_date;//time;
+    }
+    
     var progress = document.getElementById('animationProgress');
     // accept symbol and generate a url from which we get historical data
     function get_hist(symbol) {
@@ -245,19 +263,18 @@
         var api_hist_URL = 'http://' + window.location.host + '/api/hist/' + symbol;
         // initiate historical prices and dates array
         var closing_prices = [];
-        var dates = [];
+        var UTC_timestamps = [];
         var arr_count = 0;
         hist_xmlHttp.onreadystatechange = function() {
             if (hist_xmlHttp.readyState ==4 && this.status ==200 && this.status !=404) {
+                console.log(this.responseText);
                 var hist_data = JSON.parse(this.responseText);
-                // console.log(hist_data);  
-                hist_data = hist_data['Time Series (Digital Currency Daily)'];
-                for (key in hist_data) {
-                    //var closing_price = key['4a. close (USD)']
-                    // console.log(key);
-                    var price = hist_data[key]['4a. close (USD)'];
-                    dates.push(key)
-                    closing_prices.push(price);
+                console.log(hist_data);
+                price_series = hist_data['[time, low, high, open, close, volume]'];
+                for (i=0; i<price_series.length; i++) {
+
+                    UTC_timestamps.push(convert_timestamp(price_series[i][0])); // 0th data point is UTC timestamp
+                    closing_prices.push(price_series[i][4]); // 4th data point is the closing price 
                     arr_count++;
                     if (arr_count == 100) { //Use 86 to break even 
                         break;
@@ -266,8 +283,7 @@
             }
             // Call chart render function
             // dates and prices need to be reversed since most recent data are given at the top
-            render_chart(dates.reverse(), closing_prices.reverse(), symbol);
-            
+            render_chart(UTC_timestamps.reverse(), closing_prices.reverse(), symbol);
         };
         hist_xmlHttp.open("GET", api_hist_URL, true);
         hist_xmlHttp.send(null);

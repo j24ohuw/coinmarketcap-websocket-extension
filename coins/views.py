@@ -3,6 +3,8 @@ import pandas as pd
 from time import time
 import urllib.request
 import json
+import gdax
+public_client = gdax.PublicClient()
 #core django
 from django.http import Http404
 from django.contrib.auth.models import User
@@ -55,26 +57,23 @@ class CoinViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 from django.http import HttpResponse, JsonResponse
+import requests
 @api_view(['GET'])
 def historical_data_view(request, symbol):
     print(symbol)
-    closing_prices = get_daily_data(symbol)
-    return JsonResponse(closing_prices)
+    data = get_daily_data(symbol)
+    return Response({'[time, low, high, open, close, volume]':data})
+    #JsonResponse(closing_prices)
 
 def get_daily_data(symbol):
-    url = ALPHA_VANTAGE_DAILY_URL + symbol
-    with urllib.request.urlopen(url) as url:
-        data =json.loads(url.read().decode())
+    request_str = symbol + '-USD'
+    # set granularity to a day = 86400 seconds
+    data = public_client.get_product_historic_rates(request_str,granularity=86400)
+    # url = ALPHA_VANTAGE_DAILY_URL + symbol
+    # url = 'https://api.pro.coinbase.com/products/'+symbol+'-usd/candles'
+    # print(url)
+    # data = requests.get(url).json()
     return data
-    # data = data['Time Series (Digital Currency Daily)']
-    # print(data)
-    # open, high, low, close = [], [], [], []
-    # for datum in data:
-    #     open.append(datum['1a. open (USD)'])
-    #     low.append(datum['3a. low (USD)'])
-    #     high.append(datum['3a. high (USD)'])
-    #     close.append(datum['4a close (USD)'])
-    # return close
 
 
 class CoinSearchListVIew(ListAPIView):
