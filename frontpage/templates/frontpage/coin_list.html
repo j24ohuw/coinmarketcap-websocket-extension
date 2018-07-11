@@ -51,7 +51,7 @@
             var content = JSON.parse(data.content)
             
             
-            varyColour(content.name+'-marketcap', content.marketcap);
+            //varyColour(content.name+'-marketcap', content.marketcap);
             document.getElementById(content.name+'-marketcap').innerHTML = content.marketcap;
             
             varyColour(content.name+'-price', content.price);
@@ -60,7 +60,7 @@
             varyColour(content.name+'-volume', content.volume);
             document.getElementById(content.name+'-volume').innerHTML = content.volume;
             
-            varyColour(content.name+'-circulating_supply', content.circulating_supply);
+            //varyColour(content.name+'-circulating_supply', content.circulating_supply);
             document.getElementById(content.name+'-circulating_supply').innerHTML = content.circulating_supply;
             
             document.getElementById(content.name+'-percent_change_24h').innerHTML = content.percent_change_24h;

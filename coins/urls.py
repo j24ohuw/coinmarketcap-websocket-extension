@@ -12,14 +12,15 @@ from .views import CoinViewSet
 
 router = routers.DefaultRouter()
 router.register(r'coins', CoinViewSet)
+
 urlpatterns = [
     url(r'^api/', include(router.urls)),
-    url(r'^table/$', views.tableView),
-    url(r'^api/search', views.CoinSearchListVIew.as_view(), name='room'),
+    # url(r'^table/$', views.tableView),
     # url(r'^chat/$', views.index, name='index'),
     # url(r'^chat/(?P<room_name>[^/]+)/$', views.room, name='room'),
     url(r'^([A-Za-z-]+)/$', views.coin_detail),
     url(r'^api/hist/(?P<symbol>[\w]+)/$', views.historical_data_view),
+    url(r'^api/search', views.CoinSearchListView.as_view()),
 ]
 
 

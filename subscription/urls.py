@@ -10,5 +10,5 @@ router = routers.DefaultRouter()
 router.register(r'subscription', views.SubscriptionViewset)
 
 urlpatterns = [
-    url(r'^api/', include(router.urls)),
+    url(r'^', include(router.urls)),
 ]

@@ -3,10 +3,9 @@ import pandas as pd
 from time import time
 import urllib.request
 import json
-import gdax
-public_client = gdax.PublicClient()
+import requests
 #core django
-from django.http import Http404
+from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.exceptions import MultipleObjectsReturned
@@ -26,26 +25,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import Coin
 from .serializers import CoinSerializer
 
-from .helpers import get_num_currencies
+from .helpers import get_num_currencies, get_daily_data
 ALPHA_VANTAGE_DAILY_URL = 'https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&market=USD&apikey=%22B8NP683F4S21K639%22&symbol='
 """Provide list, retrieve, get_detail, update, and create views
 """
-
-def tableView(request):
-    return render(request, 'coins/table.html', {})
-
-def coin_detail(request, *args, **kwargs):
-    return render(request, 'coins/coin_detail.html', {})
-
-
-def index(request):
-    return render(request, 'coins/index.html', {})
-
-import json
-def room(request, room_name):
-    return render(request, 'coins/room.html', {
-        'room_name_json': mark_safe(json.dumps(room_name))
-    })
 
 class CoinViewSet(viewsets.ModelViewSet):
     queryset = Coin.objects.all().order_by('rank')
@@ -55,9 +38,14 @@ class CoinViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, SearchFilter,)
     search_fields = ('name', '=id', 'symbol',)
     lookup_field = 'slug'
+    
+    # returns flat list of available coins (in slugs)
+    @action(methods=['get'], detail=False)
+    def available(self, request):
+        serializer = self.get_serializer(self.queryset, many=True)
+        slugs = [coin['slug'] for coin in serializer.data]
+        return Response(slugs)
 
-from django.http import HttpResponse, JsonResponse
-import requests
 @api_view(['GET'])
 def historical_data_view(request, symbol):
     print(symbol)
@@ -65,26 +53,34 @@ def historical_data_view(request, symbol):
     return Response({'[time, low, high, open, close, volume]':data})
     #JsonResponse(closing_prices)
 
-def get_daily_data(symbol):
-    request_str = symbol + '-USD'
-    # set granularity to a day = 86400 seconds
-    data = public_client.get_product_historic_rates(request_str,granularity=86400)
-    # url = ALPHA_VANTAGE_DAILY_URL + symbol
-    # url = 'https://api.pro.coinbase.com/products/'+symbol+'-usd/candles'
-    # print(url)
-    # data = requests.get(url).json()
-    return data
+
+#####################   HTML rendering  ##########################
+def coin_detail(request, *args, **kwargs):
+    return render(request, 'coins/coin_detail.html', {})
+
+def tableView(request):
+    return render(request, 'coins/table.html', {})
 
 
-class CoinSearchListVIew(ListAPIView):
+#####################   Search rendering  ##########################
+class CoinSearchListView(ListAPIView):
     """
     Display list filtered by search query.
     """
     queryset = Coin.objects.all().order_by('rank')
     serializer_class = CoinSerializer
     filter_backends = (DjangoFilterBackend, SearchFilter,)
-    search_fields = ('=id','name', 'symbol',)
+    search_fields = ('=id','name', 'symbol', 'slug',)
 
+
+# def index(request):
+#     return render(request, 'coins/index.html', {})
+
+# import json
+# def room(request, room_name):
+#     return render(request, 'coins/room.html', {
+#         'room_name_json': mark_safe(json.dumps(room_name))
+#     })
 
 # class CoinView(viewsets.ModelViewSet):
 #     #default queryset to all coin objects

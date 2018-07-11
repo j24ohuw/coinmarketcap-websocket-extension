@@ -62,6 +62,8 @@
         } else if(button_str == "Unsubscribe") {
             send_subscription_request('DELETE');
             document.getElementById('subscription_button').innerHTML = "Subscribe";
+        } else {
+
         }
     };
     // Send DELETE/POST request to subscription URL endpoint
@@ -80,6 +82,11 @@
                 var results = data.results;
                 // console.log(data.results);
                 if (request_type=="GET") {
+                    // if results are empty then change the button text to 'subscribe'
+                    if (results.length == 0) {
+                        document.getElementById('subscription_button').innerHTML = "Subscribe";
+                    }
+                    // check if the current coin is already inside user's subscription list
                     for (var i=0; i < results.length; i++) {
                         if (slug==results[i].coin){
                             document.getElementById('subscription_button').innerHTML = "Unsubscribe";
@@ -134,7 +141,9 @@
 
 <!--Populate subscription button tag with user's current subscription status-->
 <script id="init_user_subscription_state">
+    {% if user.is_authenticated %}
     send_subscription_request("GET");
+    {% endif %}
 </script>
 
 <!--Simple get request to CoinViewSet detail view- && populate top cointainer attributes-->

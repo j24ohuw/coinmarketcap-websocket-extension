@@ -1,6 +1,9 @@
 import urllib.request, json
 import pandas as pd
 from datetime import datetime
+import gdax
+public_client = gdax.PublicClient()
+
 #import numpy as np
 BASE_URL = 'https://api.coinmarketcap.com/v2/'
 LAST_UPDATED = -1
@@ -44,6 +47,17 @@ def get_coin_data(start=0, limit=100):
         data =json.loads(url.read().decode())['data']
         # print(data)
     return parser(data)
+
+def get_daily_data(symbol):
+    request_str = symbol + '-USD'
+    # set granularity to a day = 86400 seconds
+    data = public_client.get_product_historic_rates(request_str,granularity=86400)
+    # url = ALPHA_VANTAGE_DAILY_URL + symbol
+    # url = 'https://api.pro.coinbase.com/products/'+symbol+'-usd/candles'
+    # print(url)
+    # data = requests.get(url).json()
+    return data
+
 
 # def get_listings():
 #     print('get_listings called')

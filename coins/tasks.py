@@ -82,11 +82,7 @@ def update_or_create_obj(coin_list):
         # ID = coin['name']
         defaults = coin
         obj, created = Coin.objects.update_or_create(id=id, defaults=defaults)
-        # await channel_layer.group_send(
-        #     coin_name,
-        #     coin
-        # )
-        # if the above fails, try this;
+        # send to the channel layer
         async_to_sync(channel_layer.group_send)(
             'table', 
             {

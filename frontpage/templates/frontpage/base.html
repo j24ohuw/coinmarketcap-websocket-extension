@@ -49,11 +49,11 @@
                             <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
                         </li>
                         <li class="nav-item active">
-                            <a class="nav-link" href="/api/">API</a>
+                            <a class="nav-link" href="https://github.com/j24ohuw/coinmarketcap-websocket-extension/blob/master/README.md">API</a>
                         </li>
-                        <li class="nav-item active">
+                        <!--li class="nav-item active">
                             <a class="nav-link disabled" href="#">Subscription</a>
-                        </li>
+                        </li-->
                         <li class="nav-item active" id="auth">
                             {% if user.is_authenticated %}
                                 <a class="nav-link disabled trigger-btn" href="/logout/">Logout</a>
@@ -248,7 +248,11 @@
                 get_subscriptions(callback); //step 2
             }
             // call 
-            init_subscriptions_ws_feed();
+            {% if user.is_authenticated %}
+                init_subscriptions_ws_feed();
+            {% else %}
+                create_socket_connections([{"coin":"bitcoin"},{"coin":"ethereum"},{"coin":"ripple"}]);
+            {% endif %}
         </script>
         
     <!-- Bootstrap core JavaScript
