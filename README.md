@@ -7,7 +7,6 @@ API tools and documentation
 
 #### api/coins/available  
 - Description: Array of all supported coins
-- Data Source: Coinmarketcap.com
 - URL: http://j24ohuw.xyz/api/coins/available
 - Response: 
     ```JSON
@@ -66,7 +65,7 @@ API tools and documentation
  
     ```
 #### /api/coins/?search=:coin  
-- Description: flexible search. Takes partial or full name, symbol, slug, ID of an individual coin, and retruns list of coins, most likely result on top.
+- Description: flexible search. Takes a partial or full name, symbol, or slug of a coin and retruns a list of coins with most likely result on top.
 
 - URL: http://j24ohuw.xyz/api/coins/?search=bitcoin
     ```JSON
@@ -105,7 +104,6 @@ API tools and documentation
     ```
 #### api/hist/:symbol 
 - Description: Returns up to 300 historical daily values of a coin. 
-- Data source: gdax 
 - URL: http://j24ohuw.xyz/api/hist/BTC
 - Response: 
     ```JSON
@@ -131,7 +129,6 @@ API tools and documentation
     ```
 ### WebSocket API
 - Description: real-time feed of coin data. You must use coin slugs from the availble coin end point above
-- Data source: Coinmarketcap 
 - URL: ws://j24ohuw.xyz/ws/bitcoin
 - Response: 
     ```JSON
