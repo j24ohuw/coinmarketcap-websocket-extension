@@ -67,7 +67,7 @@ API tools and documentation
 #### /api/coins/?search=:coin  
 - Description: flexible search. Takes partial or full name, symbol, slug, ID of an individual coin, and retruns list of coins, most likely result on top.
 
-- URL: http://coincap.io/api/?search=bitcoin
+- URL: http://j24ohuw.xyz/api/?search=bitcoin
     ```JSON
     {
     "count": 32,
