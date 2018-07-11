@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^users/', include('accounts.urls')),
     url(r'^', include('social.urls')),
     path('admin/', admin.site.urls),
-    url(r'^api/', include('subscription.urls')),
+    url(r'^', include('subscription.urls')),
     url(r'^', include('coins.urls')),
     url(r'^', include('frontpage.urls')),
     # url(r'^chat/', include('chat.urls')),

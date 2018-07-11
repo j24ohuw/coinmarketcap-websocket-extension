@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 # Core Django imports
 from django.conf.urls import url, include
+from django.views.generic import RedirectView
 # Third-party app imports
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework import routers
@@ -12,8 +13,11 @@ from .views import CoinViewSet
 
 router = routers.DefaultRouter()
 router.register(r'coins', CoinViewSet)
+# redirect api root to github readme.md page
+redirect_url = 'https://github.com/j24ohuw/coinmarketcap-websocket-extension/blob/master/README.md'
 
 urlpatterns = [
+    url(r'^api/$', RedirectView.as_view(url=redirect_url)),
     url(r'^api/', include(router.urls)),
     # url(r'^table/$', views.tableView),
     # url(r'^chat/$', views.index, name='index'),

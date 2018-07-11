@@ -1,0 +1,16 @@
+{% extends "rest_framework/base.html" %}
+
+{% block bootstrap_theme %}
+    <link rel="stylesheet" href="https://bootswatch.com/4/flatly/bootstrap.min.css" type="text/css">
+    <style>div.region {position:absolute; bottom:1000000px;}</style> 
+    {% block userlinks %}
+    {% endblock %}
+
+    {% block branding %}
+    {% endblock %}
+
+    {% block breadcrumbs %}
+    {% endblock %}  
+    
+{% endblock %}
+

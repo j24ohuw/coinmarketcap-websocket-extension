@@ -38,6 +38,8 @@ class CoinViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, SearchFilter,)
     search_fields = ('name', '=id', 'symbol',)
     lookup_field = 'slug'
+    http_method_names = ['get']#, 'post', 'head']
+
     
     # returns flat list of available coins (in slugs)
     @action(methods=['get'], detail=False)
