@@ -26,7 +26,7 @@ API tools and documentation
 
     ```
     
- #### /api/coins 
+#### /api/coins 
 - Description: Current stats of coins shown in table view
 - URL: http://j24ohuw.xyz/api/coins
 - Response:
@@ -63,5 +63,6 @@ API tools and documentation
             "percent_change_24h": -2.08
         },
         {...
+        }
  
     ```
