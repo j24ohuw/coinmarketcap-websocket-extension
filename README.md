@@ -65,7 +65,7 @@ API tools and documentation
  
     ```
 #### /api/coins/?search=:coin  
-- Description: flexible search. Takes partial or full name, symbol, slug, ID of an individual coin, and retruns list of coins, most likely result on top.
+- Description: flexible search. Takes a partial or full name, symbol, or slug of a coin and retruns list of coins with most likely result on top.
 
 - URL: http://j24ohuw.xyz/api/coins/?search=bitcoin
     ```JSON
