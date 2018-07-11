@@ -5,9 +5,10 @@ API tools and documentation
 
 ## REST URLs
 
-#### /coins  
+#### api/coins/available  
 - Description: Array of all supported coins
-- URL: http://j24ohuw.xyz/api/coins/coin_list
+- Data Source: Coinmarketcap.com
+- URL: http://j24ohuw.xyz/api/coins/available
 - Response: 
     ```JSON
     [
@@ -102,3 +103,53 @@ API tools and documentation
         },
 
     ```
+#### api/hist/:symbol 
+- Description: Returns up to 300 historical daily values of a coin. 
+- Data source: gdax 
+- URL: http://j24ohuw.xyz/api/hist/BTC
+- Response: 
+    ```JSON
+    {
+    "[time, low, high, open, close, volume]": [
+        [
+            1531267200,
+            6282.77,
+            6400,
+            6303.69,
+            6344.51,
+            1232.5598331999881
+        ],
+        [
+            1531180800,
+            6279,
+            6679.47,
+            6664.01,
+            6303.7,
+            8177.853908821869
+        ],
+
+    ```
+### WebSocket API
+- Description: real-time feed of coin data. You must use coin slugs from the availble coin end point above
+- Data source: Coinmarketcap 
+- URL: ws://j24ohuw.xyz/ws/bitcoin
+- Response: 
+    ```JSON
+    {
+        "type": "receive_json", 
+        "content": 
+            {
+                "name": "Bitcoin", 
+                "last_updated\": 1531282484, 
+                "symbol": "BTC", 
+                "volume": 4077920000.0, 
+                "price": 6378.25, 
+                "marketcap": 109340502814.0, 
+                "rank": 1, 
+                "id": 1, 
+                "percent_change_24h": -5.29, 
+                "circulating_supply": 17142712.0, 
+                "slug": "bitcoin"
+            }
+    }
+```
