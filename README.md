@@ -1,4 +1,4 @@
-# coinmarketcap-websocket-extension
+# Coinmarketcap websocket
 API tools and documentation
 
 
