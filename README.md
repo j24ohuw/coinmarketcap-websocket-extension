@@ -100,5 +100,5 @@ API tools and documentation
             "rank": 4,
             "percent_change_24h": -2.17
         },
-        {...
+
     ```
