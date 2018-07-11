@@ -62,6 +62,6 @@ API tools and documentation
             "rank": 2,
             "percent_change_24h": -2.08
         },
-        ...
+        {...
  
     ```
