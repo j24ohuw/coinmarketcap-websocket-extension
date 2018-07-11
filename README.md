@@ -140,7 +140,7 @@ API tools and documentation
         "content": 
             {
                 "name": "Bitcoin", 
-                "last_updated\": 1531282484, 
+                "last_updated": 1531282484, 
                 "symbol": "BTC", 
                 "volume": 4077920000.0, 
                 "price": 6378.25, 
@@ -152,4 +152,4 @@ API tools and documentation
                 "slug": "bitcoin"
             }
     }
-```
+    ```
