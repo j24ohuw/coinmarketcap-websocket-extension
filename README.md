@@ -62,7 +62,42 @@ API tools and documentation
             "rank": 2,
             "percent_change_24h": -2.08
         },
-        {...
-        }
  
     ```
+#### /api/coins/?search=:coin  
+- Description: flexible search. Takes partial or full name, symbol, slug, ID of an individual coin, and retruns list of coins, most likely result on top.
+
+- URL: http://coincap.io/api/?search=bitcoin
+    ```JSON
+    {
+    "count": 32,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "circulating_supply": 17140762.0,
+            "name": "Bitcoin",
+            "symbol": "BTC",
+            "price": 6753.81,
+            "last_updated": 1531187006.0,
+            "marketcap": 115765449803.0,
+            "volume": 3714850000.0,
+            "slug": "bitcoin",
+            "rank": 1,
+            "percent_change_24h": -0.16
+        },
+        {
+            "id": 1831,
+            "circulating_supply": 17228950.0,
+            "name": "Bitcoin Cash",
+            "symbol": "BCH",
+            "price": 733.651,
+            "last_updated": 1531187014.0,
+            "marketcap": 12640036396.0,
+            "volume": 341154000.0,
+            "slug": "bitcoin-cash",
+            "rank": 4,
+            "percent_change_24h": -2.17
+        },
+        {...
