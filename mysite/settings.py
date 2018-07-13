@@ -18,10 +18,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'j+pqw2o%+6(oq*u19bu!ieg+lsdn3u8z_rr17#+yj)7j6=n5o7'
+# SECRET_KEY = ''
 
 # no secret key will be generated during development so default value will be used; secret key will be generated during deployment 
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'j+pqw2o%+6(oq*u19bu!ieg+lsdn3u8z_rr17#+yj)7j6=n5o7')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '')
 
 """Deployment Checklist"""
 # SECURITY WARNING: don't run with debug turned on in production!
