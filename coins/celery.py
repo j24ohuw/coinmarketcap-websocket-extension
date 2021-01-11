@@ -8,7 +8,6 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
 # Windows workaround. Remove for Linux environment
 # os.environ['FORKED_BY_MULTIPROCESSING']= "1"
 os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
-# django.setup()
 
 app = Celery('coins')
 # Using a string here means the worker will not have to
@@ -18,7 +17,4 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 app.conf.broker_transport_options = {'visibility_timeout': 43200}
 
 
-# @app.task(bind=True)
-# def debug_task(self):
-#     print('Request: {0!r}'.format(self.request))
 
